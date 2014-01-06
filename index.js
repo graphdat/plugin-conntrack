@@ -69,10 +69,12 @@ function getConnTrackValues(cb)
 {
 	_run('conntrack -L', function(err, stdout, stderr)
 	{
-		if (err || stderr)
-			return cb(err || stderr);
+		if (err)
+			return cb(err);
 		if (!stdout)
 			return cb('No output from $ conntrack -L');
+		if (stderr && !stderr.match(/flow entries have been shown/)
+			return cb(stderr);
 
 		var assured = 0;
 		var total = 0;
