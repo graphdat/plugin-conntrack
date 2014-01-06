@@ -20,18 +20,18 @@
 
     "paramSchema" : [
         {
-            "title" : "Source",
-            "name" : "source",
-            "description" : "The Source to display in the legend for the conntrack data.  It will default to the hostname of the server",
-            "type" : "string"
-        },
-        {
             "title": "Reporting Level",
             "name": "mode",
             "description": "Report just the basic connection stats or report each individual connection state",
             "type" : { "enum" : [["Basic", "basic"], ["Advanced", "advanced"]] },
             "default" : "basic",
             "required": true
+        },
+        {
+            "title" : "Source",
+            "name" : "source",
+            "description" : "The Source to display in the legend for the conntrack data.  It will default to the hostname of the server",
+            "type" : "string"
         }
     ]
 }
