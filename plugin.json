@@ -28,6 +28,14 @@
             "required": true
         },
         {
+            "title": "Poll Seconds",
+            "name": "pollSeconds",
+            "description": "How often should the plugin poll conntrack",
+            "type" : "string",
+            "default" : 5,
+            "required" : true
+        },
+        {
             "title" : "Source",
             "name" : "source",
             "description" : "The Source to display in the legend for the conntrack data.  It will default to the hostname of the server",

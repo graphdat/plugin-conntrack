@@ -20,11 +20,13 @@ var _source; // the source of the metrics
 // VALIDATION
 // ==========
 
-// Which mode should we report 'basic' or 'advanced'
+// which mode should we report 'basic' or 'advanced'
 var _mode = _param.mode || 'basic';
 
-// If you do not have a poll intevarl, use 5000 as the default
-var _pollInterval = _param.pollInterval || 5000;
+// how often should we poll
+var _pollInterval = (_param.pollSeconds && parseFloat(_param.pollSeconds) * 1000) ||
+										(_param.pollInterval) ||
+										5000;
 
 // if we do not have a source, then set it
 var _source = _param.source || _os.hostname();
