@@ -18,6 +18,11 @@
     ],
 
 
+    "dashboards": [
+        { "name":"conntrack-basic", "layout": "d-w=2&d-h=1&d-pad=5&d-bg=none&d-g-CONNTRACK_CONNECTIONS=0-0-1-1&d-g-CONNTRACK_LIMIT=1-0-1-1" },
+        { "name":"conntrack-advanced", "layout": "d-w=3&d-h=3&d-pad=5&d-bg=none&d-g-CONNTRACK_LIMIT=2-0-1-1&d-g-CONNTRACK_CONNECTIONS=0-0-1-1&d-g-CONNTRACK_ASSURED=1-0-1-1&d-g-CONNTRACK_ESTABLISHED=0-1-1-1&d-g-CONNTRACK_UNREPLIED=1-1-1-1&d-g-CONNTRACK_TIMEWAIT=0-2-1-1&d-g-CONNTRACK_FINWAIT=1-2-1-1&d-g-CONNTRACK_SYNSENT=2-2-1-1&d-g-CONNTRACK_UDP=2-1-1-1" }
+    ],
+
     "paramSchema" : [
         {
             "title": "Reporting Level",
