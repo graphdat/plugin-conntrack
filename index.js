@@ -42,7 +42,7 @@ var _isRoot = process.env.USER === 'root';
 if (!_isRoot)
 {
 	console.error('This plugin requires root/sudo access');
-	process.exit(1);
+	//process.exit(1);
 }
 
 // get the max value from the system so we can view the ratio of used connections
