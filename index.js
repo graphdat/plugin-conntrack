@@ -35,7 +35,7 @@ var _pollInterval = (_param.pollSeconds && parseFloat(_param.pollSeconds) * 1000
 										5000;
 
 // if we do not have a source, then set it
-var _source = _param.source || _os.hostname();
+var _source = (_param.source && _param.source.trim() !== '') ? _param.source : _os.hostname();
 
 // to call conntrack we need root access
 var _isRoot = process.env.USER === 'root';
