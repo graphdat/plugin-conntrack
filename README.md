@@ -4,10 +4,10 @@
 
 ### Pre Reqs
 
-The statistics are pulled from `$ sudo conntrack -L`.  If you run the command `$ sudo conntrack -L` and there is no output, you need to install the conntrack tools first.
+**If you run the command `$ sudo conntrack -L` and there is no output, you need to install the conntrack tools first.**
 
 For debian based OS's: `$ sudo apt-get install conntrack`
-For redhat based OS's, follow the installation instructions on [pkgs.org](http://pkgs.org/download/conntrack-tools)
+For redhat based OS's, follow the installation instructions on [pkgs.org](http://pkgs.org/download/conntrack-tools) or this [gist](https://gist.github.com/codemoran/8309269)
 
 ### Installation & Configuration
 

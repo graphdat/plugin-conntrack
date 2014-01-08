@@ -1,3 +1,5 @@
+/*jshint multistr: true */
+
 // log the error as soon as possible
 process.on('uncaughtException', function(err) {
     console.error('msg %s, name %s, stack->\n%s', err.message, err.name, err.stack || 'NONE');
@@ -6,8 +8,12 @@ process.on('uncaughtException', function(err) {
 
 var _os = require('os');
 var _param = require('./param.json');
-var _run = require('child_process').exec;
+var _child = require('child_process');
 
+var CONNTRACK_NOT_INSTALLED = '\
+It does not look like conntrack is installed, please install it and re-run the relay\n \
+	- Debian users run: sudo apt-get install conntrack\n \
+	- Redhat users run: https://gist.github.com/codemoran/8309269\n';
 var DEFAULT_TOTAL_CONNECTIONS = (_os.totalmem()/1024) * 64;
 var STATES = ['ESTABLISHED', 'FIN_WAIT', 'TIME_WAIT', 'SYN_SENT', 'UDP'];
 
@@ -47,7 +53,7 @@ function getMaximumConnections(cb)
 		if (err)
 			return cb(err);
 		if (stderr || !stdout)
-			return cb('It does not look like conntrack is installed, please install it and re-run the relay');
+			return cb(CONNTRACK_NOT_INSTALLED);
 
 		var value = parseInt((stdout.split('=')[1] || '').trim());
 		if (isNaN(value))
@@ -56,11 +62,11 @@ function getMaximumConnections(cb)
 			return cb(null, value);
 	}
 
-	_run('sysctl net.netfilter.nf_conntrack_max', function(err, stdout, stderr)
+	_child.exec('sysctl net.netfilter.nf_conntrack_max', function(err, stdout, stderr)
 	{
 		// try the other conntrack key
 		if (!err && stderr && stderr.indexOf('is an unknown key') !== -1)
-			_run('sysctl net.ipv4.netfilter.ip_conntrack_max', handleOutput);
+			_child.exec('sysctl net.ipv4.netfilter.ip_conntrack_max', handleOutput);
 		else
 			handleOutput(err, stderr, stdout);
 	});
@@ -69,24 +75,21 @@ function getMaximumConnections(cb)
 // get the conntrack connection values
 function getConnTrackValues(cb)
 {
-	_run('conntrack -L', function(err, stdout, stderr)
+	var stderr = '';
+
+	var assured = 0;
+	var total = 0;
+	var unreplied = 0;
+
+	var state = {};
+	STATES.forEach(function(s) { state[s] = 0; });
+
+	var conntrack = _child.spawn('conntrack', ['-L']);
+	conntrack.stderr.on('data', function (data) { stderr += data.toString(); });
+	conntrack.stdout.on('data', function (data)
 	{
-		if (err)
-			return cb(err);
-		if (!stdout)
-			return cb('No output from $ conntrack -L');
-		if (stderr && !stderr.match(/flow entries have been shown/))
-			return cb(stderr);
-
-		var assured = 0;
-		var total = 0;
-		var unreplied = 0;
-
-		var state = {};
-		STATES.forEach(function(s) { state[s] = 0; });
-
 		// parse the output
-		var lines = stdout.split('\n');
+		var lines = data.toString().split('\n');
 		lines.forEach(function(line)
 		{
 			var match = line.match(/^(tcp|udp)\s+(\d+)\s+(\d+)\s+(\w+)/);
@@ -107,6 +110,18 @@ function getConnTrackValues(cb)
 
 			total++;
 		});
+	});
+	conntrack.on('error', function(err)
+	{
+		return cb(CONNTRACK_NOT_INSTALLED);
+	});
+	conntrack.on('close', function (code)
+	{
+		if (stderr && !stderr.match(/flow entries have been shown/))
+			return cb(stderr);
+
+		if (code !== 0)
+			return cb('conntrack exited with code ' + code);
 
 		return cb && cb(null, {
 			assured: assured,
@@ -114,7 +129,6 @@ function getConnTrackValues(cb)
 			total: total,
 			state: state
 		});
-
 	});
 }
 
