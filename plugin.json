@@ -1,9 +1,11 @@
 {
-    "description" : "Displays important conntrack metrics",
+    "description" : "Plugin for conntrack kernel IP connection tracking",
     "icon" : "icon.png",
     "command" : "node index.js",
     "postExtract" : "npm install",
     "ignore" : "node_modules",
+    "command_lua": "boundary-meter index.lua",
+    "postExtract_lua" : "",
 
     "metrics" : [
         "CONNTRACK_ASSURED",
@@ -38,6 +40,14 @@
             "description": "How often should the plugin poll conntrack",
             "type" : "string",
             "default" : 5,
+            "required" : true
+        },
+        {
+            "title" : "Poll Time (msec)",
+            "name" : "pollInterval",
+            "description" : "The Poll Interval to collect metrics. Default: 5 seconds",
+            "type" : "integer",
+            "default" : 5000,
             "required" : true
         },
         {
